@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N mp_desi
+#PBS -l nodes=1:ppn=32
+#PBS -l walltime=2:00:00
+#PBS -l mem=8gb
+#PBS -o /dev/null
+#PBS -e /dev/null
+LOG=/user/p8_group/gr_ADNSS/Swanith/pbs/${PBS_JOBNAME}_${PBS_JOBID%%.*}.out
+exec > "$LOG" 2>&1
+source /user/p8_group/env/miniforge/etc/profile.d/conda.sh
+conda activate /user/p8_group/env/cobaya_env
+export NRANKS=4
+export OMP_NUM_THREADS=8
+cd /user/p8_group/gr_ADNSS/Swanith
+mpirun -n $NRANKS python3 /user/p8_group/montepython/montepython/MontePython.py run \
+  -o runs/montepython/2026-07-31_lcdm_desi_only \
+  -p configs/montepython/lcdm_desi_only.param \
+  --conf ~/montepython/default.conf \
+  -N 50000

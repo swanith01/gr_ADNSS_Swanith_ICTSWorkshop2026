@@ -1,0 +1,6 @@
+runs/
+*.txt
+!notes.md
+__pycache__/
+*.pyc
+*.out
