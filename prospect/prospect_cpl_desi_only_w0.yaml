@@ -1,0 +1,42 @@
+io:
+     jobname: 'prospect_cpl_desi_only_w0'
+     write: True
+     dir: 'runs/prospect/2026-08-05_cpl_desi_only_w0'
+     overwrite_dir: True
+     snapshot_interval: 60.0
+
+run:
+     jobtype: 'profile'
+     mode: 'serial'
+
+kernel:
+     type: 'cobaya'
+     param: 'configs/cobaya/cpl_desi_only.yaml'
+
+profile:
+    parameter: 'w0_fld'
+    values: 'np.linspace(-2.0, 0.0, 6)'
+
+    optimiser: 'simulated annealing'
+
+    temperature_schedule: 'exponential'
+    temperature_range: [0.1, 0.001]
+    max_iterations: 5
+
+    step_size_schedule: 'adaptive'
+    step_size_adaptive_interval: [0.19, 0.21]
+    step_size_adaptive_multiplier: 0.3
+    step_size_adaptive_initial: 0.1
+
+    steps_per_iteration: 50
+    repetitions: 1
+
+    start_from_mcmc: 'runs/cobaya/2026-08-05_cpl_desi_only/cpl_desi_only'
+    start_bin_fraction: 0.1
+
+    plot_profile: True
+    detailed_plot: False
+    plot_Delta_chi2: True
+    plot_schedule: True
+
+    confidence_levels: [0.68, 0.95]

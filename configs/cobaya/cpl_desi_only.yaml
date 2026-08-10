@@ -1,0 +1,181 @@
+theory:
+  classy:
+    stop_at_error: False
+    extra_args:
+      N_ncdm: 1 # one non cdm species
+      deg_ncdm: 3 # 3 dof for one neutrino species
+      m_ncdm: 0.02 # Mass of each neutrino species
+      N_ur: 0.00441 # Number of Ultra-Relativistic species
+      Omega_Lambda: 0
+      use_ppf: 'yes'
+      a_ini_over_a_today_default: 1.e-16
+
+likelihood:
+# adapt according to dataset
+# use R-la likelihood instead of Planck likelihoods for faster runs
+  # planck_2018_lowl.TT:
+  # planck_2018_lowl.EE:
+  #planck_2018_highl_plik.TTTEEE_lite_native:
+  #planck_2018_lensing.native:
+  bao.desi_dr2:
+  # sn.desdovekie:
+
+params:
+# adapt the priors according to the dataset check literature 
+# run cobaya-doc classy for params used by classy
+  logA:
+    #prior:
+      #min: 0.
+      #max: 5.
+    #ref:
+      #dist: norm
+      #loc: 3.05
+      #scale: 0.001
+    #proposal: 0.015
+    value: 3.05
+    latex: \log(10^{10} A_\mathrm{s})
+    drop: true
+  A_s:
+    value: 'lambda logA: 1e-10*np.exp(logA)'
+    latex: A_\mathrm{s}
+  n_s:
+    #prior:
+      #min: 0.2
+      #max: 1.8
+    #ref:
+      #dist: norm
+      #loc: 0.965
+      #scale: 0.004
+    #proposal: 0.004
+    value: 0.965
+    latex: n_\mathrm{s}
+  theta_s_100:
+    latex: 100\theta_\mathrm{s}
+  H0:
+    prior:
+      min: 50
+      max: 150
+    ref:
+      dist: norm
+      loc: 67.3
+      scale: 2
+    proposal: 2
+    latex: H_0
+  omega_b:
+    prior:
+      min: 0.01
+      max: 0.03
+    ref:
+      dist: norm
+      loc: 0.0224
+      scale: 0.0001
+    proposal: 0.00015
+    latex: \Omega_\mathrm{b} h^2
+  omega_cdm:
+    prior:
+      min: 0.003
+      max: 0.9
+    ref:
+      dist: norm
+      loc: 0.12
+      scale: 0.001
+    proposal: 0.0013
+    latex: \Omega_\mathrm{c} h^2
+  tau_reio:
+    #prior:
+      #min: 0.01
+      #max: 0.8
+    #ref:
+      #dist: norm
+      #loc: 0.055
+      #scale: 0.006
+    #proposal: 0.008
+    value: 0.055
+    latex: \tau_\mathrm{reio}
+  w0_fld:
+    prior:
+      min: -3
+      max: 1
+    ref:
+      dist: norm
+      loc: -1.0
+      scale: 0.1
+    proposal: 0.1
+    latex: w_0
+  w0wa:
+    prior:
+      min: -5
+      max: 0
+    ref:
+      dist: norm
+      loc: 0.0
+      scale: 0.3
+    proposal: 0.3
+    latex: w_0+w_a
+    drop: true
+  wa_fld:
+    value: 'lambda w0_fld, w0wa: w0wa - w0_fld'
+    latex: w_a
+  Omega_m:
+    latex: \Omega_\mathrm{m}
+  omegamh2:
+    derived: 'lambda Omega_m, H0: Omega_m*(H0/100)**2'
+    latex: \Omega_\mathrm{m} h^2
+  YHe:
+    latex: Y_\mathrm{P}
+  z_reio:
+    latex: z_\mathrm{re}
+  sigma8:
+    latex: \sigma_8
+  s8h5:
+    derived: 'lambda sigma8, H0: sigma8*(H0*1e-2)**(-0.5)'
+    latex: \sigma_8/h^{0.5}
+  s8omegamp5:
+    derived: 'lambda sigma8, Omega_m: sigma8*Omega_m**0.5'
+    latex: \sigma_8 \Omega_\mathrm{m}^{0.5}
+  S8:
+    derived: 'lambda sigma8, Omega_m: sigma8*(Omega_m/0.3)**0.5'
+    latex: S_8
+  s8omegamp25:
+    derived: 'lambda sigma8, Omega_m: sigma8*Omega_m**0.25'
+    latex: \sigma_8 \Omega_\mathrm{m}^{0.25}
+  A:
+    derived: 'lambda A_s: 1e9*A_s'
+    latex: 10^9 A_\mathrm{s}
+  clamp:
+    derived: 'lambda A_s, tau_reio: 1e9*A_s*np.exp(-2*tau_reio)'
+    latex: 10^9 A_\mathrm{s} e^{-2\tau}
+  age:
+    latex: '{\rm{Age}}/\mathrm{Gyr}'
+  rs_drag:
+    latex: r_\mathrm{drag}
+  rs_d_h:
+    latex: r_\mathrm{drag} h
+  da_star:
+    latex: d_\mathrm{A}(z_*)
+  z_star:
+    latex: z_*
+  rs_star:
+    latex: r_s(z_*)
+  R_cmb_red: 
+    derived: 'lambda da_star, Omega_m, H0: np.sqrt(Omega_m*H0**2)*da_star/2.99792458e5'
+    latex: R
+  lA_cmb_red:
+    derived: 'lambda z_star, da_star, rs_star: (1+z_star)* np.pi*da_star/rs_star'
+    latex: l_\mathrm{A}
+
+sampler:
+  mcmc:
+    max_samples: 100000
+    # proposal covmat present
+    # covmat: #provide path to proposal covmat
+    Rminus1_stop: 0.01
+  # evaluate:
+  #   override:
+  #     omega_b: 3.236568e-02
+  #     H0: 7.660095e+01
+    
+
+packages_path: /user/p8_group/cobaya_packages
+output: /user/p8_group/gr_ADNSS/Swanith/runs/cobaya/2026-08-05_cpl_desi_only/cpl_desi_only
+# debug: True

@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -N prospect_desi_only_om
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=8:00:00
+#PBS -l mem=8gb
+#PBS -o /dev/null
+#PBS -e /dev/null
+LOG=/user/p8_group/gr_ADNSS/Swanith/pbs/${PBS_JOBNAME}_${PBS_JOBID%%.*}.out
+exec > "$LOG" 2>&1
+source /user/p8_group/env/miniforge/etc/profile.d/conda.sh
+conda activate /user/p8_group/env/cobaya_env
+cd /user/p8_group/gr_ADNSS/Swanith
+prospect prospect/prospect_cpl_desi_only_omegam_Om.yaml
