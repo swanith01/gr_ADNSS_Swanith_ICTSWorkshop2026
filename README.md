@@ -70,7 +70,52 @@ Figures in `analysis/figures/`:
    use of stale, inconsistent state. Always clear before rerunning after a
    config change.
 
-## w0waCDM (CPL) — attempted, not completed
+## w0waCDM (CPL) — resolved (2026-08-10 update)
+
+The joint-prior bug described below was **fixed**. Root cause and fix,
+in short: independent box priors on `w0_fld`/`wa_fld` allowed
+`w0+wa > 1/3`, an unphysical region (no radiation domination at
+`a->0` in CLASS). The paper's own joint prior (`w0+wa in [-5,0]`)
+prevents this by construction.
+
+**Fix, implemented in Cobaya** (`configs/cobaya/cpl_*.yaml`): sample
+`w0_fld` and `w0wa` (= `w0+wa`) directly, each with its own simple box
+prior; derive `wa_fld` via `drop: true` + `value: 'lambda w0_fld, w0wa:
+w0wa - w0_fld'`. The unphysical region is now structurally unreachable
+-- no rejection/veto needed. Same approach used for `Omega_m`: sample
+`Omega_m` and `H0` directly, derive `omega_cdm` via `value:` (see
+`configs/cobaya/cpl_*_omegam.yaml`).
+
+Other bugs found and fixed along the way:
+- `use_ppf: True` (YAML boolean) is not understood by CLASS's C-level
+  parser; must be the string `use_ppf: 'yes'`.
+- `stop_at_error: True` (the tutors' original template default) makes
+  Cobaya crash the *entire* job on any single bad point, rather than
+  rejecting it and continuing. Set `stop_at_error: False` for any
+  w0waCDM run -- rare numerically-stiff points are expected even
+  within a physically-valid prior, and should be silently rejected,
+  not fatal.
+- `omega_cdm = Omega_m*(H0/100)^2 - omega_b - omega_ncdm` can go
+  *negative* near the edges of wide `Omega_m`/`H0` priors, causing an
+  uncatchable low-level CLASS crash (no Python traceback at all --
+  distinguish from the CosmoComputationError cases above). Fixed by
+  tightening `Omega_m >= 0.15` and `H0 in [55,85]` so the formula
+  stays positive even at prior extremes.
+- CMB-only w0waCDM runs needed `mem=32gb` (vs 16gb for DESI/DES Y5) --
+  likely OOM-killed silently otherwise (no error message captured,
+  since `#PBS -e /dev/null` discards any OS-level kill message).
+
+**PROSPECT** (Holm et al. 2024, arXiv:2312.02972,
+`pip install prospect-public`, Python >=3.10) was installed and
+confirmed working for the frequentist half -- profiles `w0_fld` and
+`Omega_m` directly off the Cobaya chains above (`prospect/` directory,
+`pbs/prospect_cpl_*.pbs`). Must `pip install` from the login node
+(`pawna`), not a compute node -- compute nodes have no internet
+access on this cluster. Note PROSPECT has no automatic convergence
+check; inspect the `*_schedule.pdf` plot it produces to judge
+convergence by eye.
+
+## w0waCDM (CPL) — original MontePython attempt, superseded by the above
 
 Standalone-dataset CPL runs (DESI, DES Y5, CMB, each alone) were attempted
 as a follow-up curiosity exercise. Root cause of persistent low MCMC
