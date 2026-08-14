@@ -1,7 +1,7 @@
 io:
      jobname: 'prospect_cpl_cmb_only_omegam_Om'
      write: True
-     dir: 'runs/prospect/2026-08-10_cpl_cmb_only_omegam_Om'
+     dir: 'runs/prospect/2026-08-11_cpl_cmb_only_omegam_Om'
      overwrite_dir: True
      snapshot_interval: 60.0
 
@@ -31,7 +31,7 @@ profile:
     steps_per_iteration: 500
     repetitions: 2
 
-    start_from_mcmc: 'runs/cobaya/2026-08-10_cpl_cmb_only_omegam/cpl_cmb_only_omegam'
+    start_from_mcmc: 'runs/cobaya/2026-08-11_cpl_cmb_only_omegam_bootstrapped/cpl_cmb_only_omegam'
     start_bin_fraction: 0.1
 
     plot_profile: True

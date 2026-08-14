@@ -13,4 +13,4 @@ export PYTHONPATH=$PYTHONPATH:/user/p8_group/cobaya_packages/
 export NRANKS=4
 export OMP_NUM_THREADS=8
 cd /user/p8_group/gr_ADNSS/Swanith
-mpirun -n $NRANKS cobaya-run configs/cobaya/cpl_cmb_only_omegam.yaml -f
+mpirun -n $NRANKS cobaya-run configs/cobaya/cpl_cmb_only_omegam.yaml -r

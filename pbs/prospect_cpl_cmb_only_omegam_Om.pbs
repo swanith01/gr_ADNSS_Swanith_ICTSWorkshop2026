@@ -9,5 +9,23 @@ LOG=/user/p8_group/gr_ADNSS/Swanith/pbs/${PBS_JOBNAME}_${PBS_JOBID%%.*}.out
 exec > "$LOG" 2>&1
 source /user/p8_group/env/miniforge/etc/profile.d/conda.sh
 conda activate /user/p8_group/env/cobaya_env
+export PYTHONPATH=$PYTHONPATH:/user/p8_group/cobaya_packages/
 cd /user/p8_group/gr_ADNSS/Swanith
+
+PROGRESS_FILE=runs/cobaya/2026-08-11_cpl_cmb_only_omegam_bootstrapped/cpl_cmb_only_omegam.progress
+if [ ! -f "$PROGRESS_FILE" ]; then
+    echo "No progress file found at $PROGRESS_FILE — Cobaya run may have failed before first checkpoint. Exiting."
+    exit 1
+fi
+
+
+
+N_SAMPLES=$(tail -1 "$PROGRESS_FILE" | awk '{print $1}')
+echo "Latest N (accepted samples, summed) from PROGRESS_FILE : $N_SAMPLES"
+MIN_SAMPLES=8000
+if [ -z "$N_SAMPLES" ] || (( $(echo "$N_SAMPLES < $MIN_SAMPLES" | bc -l) )); then
+    echo "N = $N_SAMPLES below minimum MIN_SAMPLES accepted samples -- refusing to run PROSPECT on this chain. Exiting."
+    exit 1
+fi
+
 prospect prospect/prospect_cpl_cmb_only_omegam_Om.yaml

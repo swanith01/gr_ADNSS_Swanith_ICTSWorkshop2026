@@ -105,7 +105,7 @@ params:
       dist: norm
       loc: -1.0
       scale: 0.1
-    proposal: 0.1
+    proposal: 0.02
     latex: w_0
   w0wa:
     prior:
@@ -115,7 +115,7 @@ params:
       dist: norm
       loc: 0.0
       scale: 0.3
-    proposal: 0.3
+    proposal: 0.05
     latex: w_0+w_a
     drop: true
   wa_fld:
@@ -170,8 +170,10 @@ params:
 sampler:
   mcmc:
     max_samples: 100000
-    # proposal covmat present
-    # covmat: #provide path to proposal covmat
+    # proposal covmat present, bootstrapped from crashed 2026-08-10 run
+    covmat: /user/p8_group/gr_ADNSS/Swanith/configs/cobaya/covmats/cpl_cmb_only_omegam_bootstrap.covmat
+    covmat_params: [H0, omega_b, Omega_m, w0_fld, w0wa]
+    max_tries: 500
     Rminus1_stop: 0.01
   # evaluate:
   #   override:
@@ -180,5 +182,5 @@ sampler:
     
 
 packages_path: /user/p8_group/cobaya_packages
-output: /user/p8_group/gr_ADNSS/Swanith/runs/cobaya/2026-08-10_cpl_cmb_only_omegam/cpl_cmb_only_omegam
+output: /user/p8_group/gr_ADNSS/Swanith/runs/cobaya/2026-08-11_cpl_cmb_only_omegam_bootstrapped/cpl_cmb_only_omegam
 # debug: True
